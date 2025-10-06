@@ -1,0 +1,2 @@
+# fujiloggleworks
+fujiloggle worksのsite上で稼働するJava scriptを管理する
