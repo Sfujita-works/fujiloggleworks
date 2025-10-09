@@ -1,0 +1,871 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>簡易見積りシミュレーター</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
+            background: linear-gradient(135deg, #fef5f1 0%, #f5e6dc 100%);
+            padding: 20px;
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 900px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        header {
+            background: linear-gradient(135deg, #E08450 0%, #D8692E 100%);
+            color: white;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        
+        header h1 {
+            font-size: 20px !important;
+            margin-bottom: 10px;
+        }
+        
+        header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+        
+        .content {
+            padding: 40px 30px;
+        }
+        
+        .accordion-section {
+            margin-bottom: 20px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+        
+        .accordion-header {
+            background: #f8f9fa;
+            padding: 20px;
+            cursor: pointer;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            transition: all 0.3s ease;
+            user-select: none;
+        }
+        
+        .accordion-header:hover {
+            background: #e9ecef;
+        }
+        
+        .accordion-header.active {
+            background: #fff5f0;
+            border-bottom: 2px solid #D8692E;
+        }
+        
+        .accordion-title {
+            font-size: 18px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .accordion-status {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 14px;
+            color: #666;
+        }
+        
+        .status-badge {
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+        }
+        
+        .status-unselected {
+            background: #e9ecef;
+            color: #666;
+        }
+        
+        .status-selected {
+            background: #d4edda;
+            color: #155724;
+        }
+        
+        .accordion-icon {
+            font-size: 20px;
+            color: #D8692E;
+            transition: all 0.3s ease;
+        }
+        
+        .accordion-content {
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease;
+        }
+        
+        .accordion-content.active {
+            max-height: 3000px;
+        }
+        
+        .accordion-inner {
+            padding: 20px;
+        }
+        
+        .option-group {
+            display: grid;
+            gap: 15px;
+        }
+        
+        .option {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: flex-start;
+            gap: 15px;
+        }
+        
+        .option:hover {
+            border-color: #D8692E;
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(216, 105, 46, 0.15);
+        }
+        
+        .option.selected {
+            border-color: #D8692E;
+            background: #fff5f0;
+        }
+        
+        .option.unselected {
+            opacity: 0.5;
+        }
+        
+        .option input[type="radio"],
+        .option input[type="checkbox"] {
+            width: 20px;
+            height: 20px;
+            margin-top: 3px;
+            cursor: pointer;
+            accent-color: #D8692E;
+        }
+        
+        .option-details {
+            flex: 1;
+        }
+        
+        .option-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+        
+        .option-name {
+            font-weight: 600;
+            font-size: 16px;
+            color: #333;
+        }
+        
+        .option-price {
+            font-weight: 700;
+            font-size: 18px;
+            color: #D8692E;
+        }
+        
+        .option-desc {
+            font-size: 13px;
+            color: #666;
+            line-height: 1.5;
+        }
+        
+        .discount-badge {
+            display: inline-block;
+            background: #ff6b6b;
+            color: white;
+            padding: 4px 10px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-left: 10px;
+        }
+        
+        .option.design-bamboo {
+            background: #EBEDED;
+        }
+        
+        .option.design-sakura {
+            background: #fff0f5;
+        }
+        
+        .category-title {
+            font-size: 16px;
+            color: #D8692E;
+            font-weight: 600;
+            margin-top: 25px;
+            margin-bottom: 12px;
+            padding-left: 10px;
+            border-left: 3px solid #D8692E;
+        }
+        
+        .summary {
+            background: #556E98;
+            color: white;
+            padding: 30px;
+            border-radius: 12px;
+            margin-top: 40px;
+            position: sticky;
+            top: 20px;
+        }
+        
+        .summary-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            text-align: center;
+        }
+        
+        .summary-selected-items {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 15px;
+            margin-bottom: 20px;
+            font-size: 13px;
+        }
+        
+        .summary-selected-item {
+            margin-bottom: 8px;
+            padding: 5px 0;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
+        
+        .summary-selected-item:last-child {
+            border-bottom: none;
+        }
+        
+        .summary-section {
+            margin-bottom: 20px;
+        }
+        
+        .summary-section-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 15px;
+            border-bottom: 1px solid rgba(255,255,255,0.2);
+            padding-bottom: 10px;
+        }
+        
+        .summary-items {
+            background: rgba(255,255,255,0.1);
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 10px;
+            min-height: 60px;
+        }
+        
+        .summary-item {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+            font-size: 14px;
+        }
+        
+        .summary-item:last-child {
+            margin-bottom: 0;
+        }
+        
+        .summary-total {
+            border-top: 2px solid rgba(255,255,255,0.3);
+            padding-top: 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .total-label {
+            font-size: 18px;
+            font-weight: 600;
+        }
+        
+        .total-amount {
+            font-size: 32px;
+            font-weight: 700;
+        }
+        
+        .note {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            margin-top: 30px;
+            border-radius: 4px;
+            font-size: 13px;
+            color: #856404;
+        }
+        
+        .contact-button {
+            display: inline-block;
+            background-color: #D8692E;
+            color: white;
+            padding: 15px 40px;
+            border-radius: 8px;
+            text-decoration: none;
+            font-size: 16px;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            border: 2px solid transparent;
+        }
+        
+        .contact-button:hover {
+            background-color: white;
+            color: #556E98;
+            border: 2px solid #556E98;
+        }
+        
+        @media (max-width: 768px) {
+            .content {
+                padding: 30px 20px;
+            }
+            
+            header h1 {
+                font-size: 18px !important;
+            }
+            
+            .accordion-title {
+                font-size: 16px;
+            }
+            
+            .summary {
+                position: relative;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>簡易見積りシミュレーター</h1>
+            <p>ご希望の機能を選択すると、自動で料金が計算されます。価格はすべて税抜き表示です。</p>
+        </header>
+        
+        <div class="content">
+            <!-- コース選択（初期状態で開いている） -->
+            <div class="accordion-section">
+                <div class="accordion-header active" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">1. コースを選択してください</div>
+                    <div class="accordion-status">
+                        <span class="status-badge status-unselected" id="course-status">未選択</span>
+                        <span class="accordion-icon">▼</span>
+                    </div>
+                </div>
+                <div class="accordion-content active">
+                    <div class="accordion-inner">
+                        <div class="option-group">
+                            <label class="option">
+                                <input type="radio" name="course" value="30000" data-name="基本コース">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">基本コース</span>
+                                        <span class="option-price">¥30,000</span>
+                                    </div>
+                                    <div class="option-desc">トップページ、サービス紹介、会社案内、お問い合わせ or ブログを含む基本的なプラン</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="radio" name="course" value="35000" data-name="+チョイスA（ブログ or ギャラリー）">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">+チョイスA（ブログ or ギャラリー）</span>
+                                        <span class="option-price"><span style="text-decoration: line-through; font-size: 14px; color: #999;">¥37,000</span> ¥35,000<span class="discount-badge">¥2,000お得</span></span>
+                                    </div>
+                                    <div class="option-desc">基本コース＋ブログ機能 または ギャラリー機能（SEO設定込み）</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="radio" name="course" value="40000" data-name="+チョイスB（採用ページ or 予約機能）">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">+チョイスB（採用ページ or 予約機能）</span>
+                                        <span class="option-price"><span style="text-decoration: line-through; font-size: 14px; color: #999;">¥42,000</span> ¥40,000<span class="discount-badge">¥2,000お得</span></span>
+                                    </div>
+                                    <div class="option-desc">基本コース＋採用ページ（外部サービス連携）または 予約機能（外部サービス連携）（SEO設定込み）</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="radio" name="course" value="60000" data-name="フルコース">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">フルコース</span>
+                                        <span class="option-price"><span style="text-decoration: line-through; font-size: 14px; color: #999;">¥68,000</span> ¥60,000<span class="discount-badge">¥8,000お得</span></span>
+                                    </div>
+                                    <div class="option-desc">全機能込み！ブログ、ギャラリー、採用ページ、予約機能まで完備</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- デザインテーマ選択 -->
+            <div class="accordion-section">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">2. デザインテーマを選択してください</div>
+                    <div class="accordion-status">
+                        <span class="status-badge status-unselected" id="design-status">未選択</span>
+                        <span class="accordion-icon">▶</span>
+                    </div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <div class="option-group">
+                            <label class="option design-bamboo">
+                                <input type="radio" name="design" value="0" data-name="Bamboo（シックなデザイン）">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">Bamboo（シックなデザイン）</span>
+                                        <span class="option-price">込み</span>
+                                    </div>
+                                    <div class="option-desc">モノトーンベースのミニマルで信頼感のあるデザイン</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option design-sakura">
+                                <input type="radio" name="design" value="0" data-name="Sakura（華やかなデザイン）">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">Sakura（華やかなデザイン）</span>
+                                        <span class="option-price">込み</span>
+                                    </div>
+                                    <div class="option-desc">華やかで上品、クリエイティブでオリジナリティのあるデザイン</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 追加オプション -->
+            <div class="accordion-section">
+                <div class="accordion-header" onclick="toggleAccordion(this)">
+                    <div class="accordion-title">3. 追加オプション（任意）</div>
+                    <div class="accordion-status">
+                        <span class="status-badge status-unselected" id="option-status">未選択</span>
+                        <span class="accordion-icon">▶</span>
+                    </div>
+                </div>
+                <div class="accordion-content">
+                    <div class="accordion-inner">
+                        <!-- カテゴリーごとにオプションを配置 -->
+                        <h3 class="category-title">ブランドビジュアルAI制作</h3>
+                        <div class="option-group">
+                            <label class="option">
+                                <input type="checkbox" name="option" value="5000" data-name="ファビコン・ロゴ制作" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">ファビコン・ロゴ制作</span>
+                                        <span class="option-price">+¥5,000～/5案</span>
+                                    </div>
+                                    <div class="option-desc">Canvaや生成AIを活用したシンプルなデザイン制作</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="checkbox" name="option" value="5000" data-name="キャラクター制作" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">キャラクター制作</span>
+                                        <span class="option-price">+¥5,000～/5枚</span>
+                                    </div>
+                                    <div class="option-desc">GeminiなどのAIを活用したSNSやWebサイトで使えるキャラクター提案</div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <h3 class="category-title">デジタルマーケティングサポート</h3>
+                        <div class="option-group">
+                            <label class="option">
+                                <input type="checkbox" name="option" value="5000" data-name="SNSリール作成サポート" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">SNSリール作成サポート</span>
+                                        <span class="option-price">+¥5,000～/1本</span>
+                                    </div>
+                                    <div class="option-desc">静止画とテキストで、手軽に伝わるリール動画を制作</div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <h3 class="category-title">コンテンツ運用・拡張</h3>
+                        <div class="option-group">
+                            <label class="option">
+                                <input type="checkbox" name="option" value="5000" data-name="ページ修正・追加" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">ページ修正・追加</span>
+                                        <span class="option-price">+¥5,000～/1ページ</span>
+                                    </div>
+                                    <div class="option-desc">テキストや画像の差し替え、同構成のページ増設</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="checkbox" name="option" value="50000" data-name="コンテンツ制作サポート（見本と同じ構成）" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">コンテンツ制作サポート（見本と同じ構成）</span>
+                                        <span class="option-price">+¥50,000～/5ページ分</span>
+                                    </div>
+                                    <div class="option-desc">お客様の思いをヒアリング後、サイトに適した文章や画像構成をご提案</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="checkbox" name="option" value="15000" data-name="コンテンツ制作サポート（カスタムページ）" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">コンテンツ制作サポート（カスタムページ）</span>
+                                        <span class="option-price">+¥15,000～/1ページ分</span>
+                                    </div>
+                                    <div class="option-desc">既存ページや新規ページに追加するカスタム構成のコンテンツ制作</div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <h3 class="category-title">導入サポート</h3>
+                        <div class="option-group">
+                            <label class="option">
+                                <input type="checkbox" name="option" value="10000" data-name="サーバー導入" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">サーバー導入</span>
+                                        <span class="option-price">+¥10,000～/1サーバー・1ドメイン</span>
+                                    </div>
+                                    <div class="option-desc">契約代行、ネームサーバー設定、SSL設定、WordPress初期構築まで一括対応</div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <h3 class="category-title">学習・継続サポート</h3>
+                        <div class="option-group">
+                            <label class="option">
+                                <input type="checkbox" name="option" value="10000" data-name="マニュアル提供（簡易編）" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">マニュアル提供（簡易編）</span>
+                                        <span class="option-price">+¥10,000/1サイト</span>
+                                    </div>
+                                    <div class="option-desc">管理画面の入り方、ログイン方法、ブログ投稿と固定ページの書き方など</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="checkbox" name="option" value="15000" data-name="マニュアル提供＋研修（簡易編）" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">マニュアル提供＋研修（簡易編）</span>
+                                        <span class="option-price">+¥15,000/1サイト</span>
+                                    </div>
+                                    <div class="option-desc">簡易版マニュアル渡りの操作手順とビデオ会議を使って研修（約1～1.5時間）</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="checkbox" name="option" value="25000" data-name="マニュアル提供（本格編）" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">マニュアル提供（本格編）</span>
+                                        <span class="option-price">+¥25,000/1サイト</span>
+                                    </div>
+                                    <div class="option-desc">簡易版＋サイト構成・管理画面の基本項目の解説、WordPressの主要操作の解説など</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="checkbox" name="option" value="35000" data-name="マニュアル提供＋研修（本格編）" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">マニュアル提供＋研修（本格編）</span>
+                                        <span class="option-price">+¥35,000/1サイト</span>
+                                    </div>
+                                    <div class="option-desc">本格版マニュアル渡りの操作手順とビデオ会議を使って研修（約2時間）</div>
+                                </div>
+                            </label>
+                        </div>
+                        
+                        <h3 class="category-title">技術・保守サポート（月額）</h3>
+                        <div class="option-group">
+                            <label class="option">
+                                <input type="checkbox" name="option" value="10000" data-name="ライト保守" data-monthly="true" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">ライト保守</span>
+                                        <span class="option-price">+¥10,000～/1サイト/月額</span>
+                                    </div>
+                                    <div class="option-desc">WordPress更新、プラグイン修正・バックアップ（月1回）、不具合察知等一報など</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="checkbox" name="option" value="8000" data-name="コンテンツ保守" data-monthly="true" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">コンテンツ保守</span>
+                                        <span class="option-price">+¥8,000～/1サイト/月額</span>
+                                    </div>
+                                    <div class="option-desc">テキストや画像の軽微な修正、SEO再設定などを月次対応</div>
+                                </div>
+                            </label>
+                            
+                            <label class="option">
+                                <input type="checkbox" name="option" value="3000" data-name="セキュリティ対策・運用" data-monthly="true" onchange="updateSummary()">
+                                <div class="option-details">
+                                    <div class="option-header">
+                                        <span class="option-name">セキュリティ対策・運用</span>
+                                        <span class="option-price">+¥3,000～/1サイト/月額</span>
+                                    </div>
+                                    <div class="option-desc">reCAPTCHA導入・スパム防止設定などを実施</div>
+                                </div>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- 見積り結果 -->
+            <div class="summary">
+                <h3 class="summary-title">お見積り</h3>
+                <div class="summary-selected-items" id="selectedSummary">
+                    <div style="text-align: center; color: rgba(255,255,255,0.7);">コースを選択してください</div>
+                </div>
+                <div class="summary-total">
+                    <span class="total-label">初回合計金額</span>
+                    <span class="total-amount" id="totalAmount">¥0</span>
+                </div>
+            </div>
+            
+            <div class="note">
+                <strong>ご注意：</strong>この見積りは目安です。詳細なお見積りは、お問い合わせフォームよりご相談ください。月額サービスは初月のみの計算です。
+            </div>
+            
+            <div style="text-align: center; margin-top: 30px;">
+                <a href="https://portfolio.fujiloggle.com/apply-contact/" class="contact-button">
+                    お問い合わせ
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+    function toggleAccordion(header) {
+        const content = header.nextElementSibling;
+        const icon = header.querySelector('.accordion-icon');
+        
+        header.classList.toggle('active');
+        content.classList.toggle('active');
+        
+        // アイコンの切り替え（▶ ⇔ ▼）
+        if (content.classList.contains('active')) {
+            icon.textContent = '▼';
+        } else {
+            icon.textContent = '▶';
+        }
+    }
+    
+    let totalOnetime = 0;
+    let totalMonthly = 0;
+    
+    function updateSummary() {
+        totalOnetime = 0;
+        totalMonthly = 0;
+        const selectedItemsOnetime = {};
+        const selectedItemsMonthly = {};
+        
+        // コース選択の集計
+        const selectedCourse = document.querySelector('input[name="course"]:checked');
+        if (selectedCourse) {
+            const price = parseInt(selectedCourse.value);
+            const name = selectedCourse.dataset.name;
+            selectedItemsOnetime[name] = price;
+        }
+        
+        // オプション選択の集計
+        document.querySelectorAll('input[name="option"]:checked').forEach(checkbox => {
+            const price = parseInt(checkbox.value);
+            const name = checkbox.dataset.name;
+            const isMonthly = checkbox.dataset.monthly === 'true';
+            
+            if (isMonthly) {
+                selectedItemsMonthly[name] = price;
+            } else {
+                selectedItemsOnetime[name] = price;
+            }
+        });
+        
+        // 合計計算
+        for (const price of Object.values(selectedItemsOnetime)) {
+            totalOnetime += price;
+        }
+        for (const price of Object.values(selectedItemsMonthly)) {
+            totalMonthly += price;
+        }
+        
+        // 表示更新
+        document.getElementById('totalAmount').textContent = '¥' + (totalOnetime + totalMonthly).toLocaleString();
+        
+        // 選択概要を更新（価格付き、チェックボックス付き）
+        let summaryHTML = '';
+        if (Object.keys(selectedItemsOnetime).length > 0 || Object.keys(selectedItemsMonthly).length > 0) {
+            for (const [name, price] of Object.entries(selectedItemsOnetime)) {
+                summaryHTML += `
+                    <div class="summary-selected-item">
+                        <label style="display: flex; align-items: center; cursor: pointer; width: 100%;">
+                            <input type="checkbox" checked onchange="removeItem('${name.replace(/'/g, "\\'")}', 'onetime')" style="margin-right: 10px;">
+                            <span style="flex: 1;">${name}</span>
+                            <span style="font-weight: 600;">¥${price.toLocaleString()}</span>
+                        </label>
+                    </div>`;
+            }
+            for (const [name, price] of Object.entries(selectedItemsMonthly)) {
+                summaryHTML += `
+                    <div class="summary-selected-item">
+                        <label style="display: flex; align-items: center; cursor: pointer; width: 100%;">
+                            <input type="checkbox" checked onchange="removeItem('${name.replace(/'/g, "\\'")}', 'monthly')" style="margin-right: 10px;">
+                            <span style="flex: 1;">${name}（月額）</span>
+                            <span style="font-weight: 600;">¥${price.toLocaleString()}</span>
+                        </label>
+                    </div>`;
+            }
+        } else {
+            summaryHTML = '<div style="text-align: center; color: rgba(255,255,255,0.7);">コースを選択してください</div>';
+        }
+        document.getElementById('selectedSummary').innerHTML = summaryHTML;
+    }
+    
+    function removeItem(name, type) {
+        // コースの選択解除
+        const courseRadio = document.querySelector(`input[name="course"][data-name="${name}"]`);
+        if (courseRadio) {
+            courseRadio.checked = false;
+            const option = courseRadio.closest('.option');
+            option.classList.remove('selected');
+            option.classList.add('unselected');
+            
+            // ステータスバッジ更新
+            const statusBadge = document.getElementById('course-status');
+            statusBadge.textContent = '未選択';
+            statusBadge.classList.remove('status-selected');
+            statusBadge.classList.add('status-unselected');
+        }
+        
+        // オプションの選択解除
+        const optionCheckbox = document.querySelector(`input[name="option"][data-name="${name}"]`);
+        if (optionCheckbox) {
+            optionCheckbox.checked = false;
+            const option = optionCheckbox.closest('.option');
+            option.classList.remove('selected');
+            
+            // オプションステータスバッジ更新
+            const checkedCount = document.querySelectorAll('input[name="option"]:checked').length;
+            const statusBadge = document.getElementById('option-status');
+            if (checkedCount > 0) {
+                statusBadge.textContent = `${checkedCount}件選択中`;
+            } else {
+                statusBadge.textContent = '未選択';
+                statusBadge.classList.remove('status-selected');
+                statusBadge.classList.add('status-unselected');
+            }
+        }
+        
+        updateSummary();
+    }
+    
+    // コース選択
+    document.querySelectorAll('input[name="course"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const statusBadge = document.getElementById('course-status');
+            statusBadge.textContent = '選択済み：' + this.dataset.name;
+            statusBadge.classList.remove('status-unselected');
+            statusBadge.classList.add('status-selected');
+            
+            // 選択済みスタイル適用
+            document.querySelectorAll('input[name="course"]').forEach(r => {
+                const option = r.closest('.option');
+                if (r.checked) {
+                    option.classList.add('selected');
+                    option.classList.remove('unselected');
+                } else {
+                    option.classList.remove('selected');
+                    option.classList.add('unselected');
+                }
+            });
+            
+            updateSummary();
+        });
+    });
+    
+    // デザイン選択
+    document.querySelectorAll('input[name="design"]').forEach(radio => {
+        radio.addEventListener('change', function() {
+            const statusBadge = document.getElementById('design-status');
+            statusBadge.textContent = '選択済み：' + this.dataset.name;
+            statusBadge.classList.remove('status-unselected');
+            statusBadge.classList.add('status-selected');
+            
+            document.querySelectorAll('input[name="design"]').forEach(r => {
+                const option = r.closest('.option');
+                if (r.checked) {
+                    option.classList.add('selected');
+                } else {
+                    option.classList.remove('selected');
+                }
+            });
+        });
+    });
+    
+    // オプション選択
+    document.querySelectorAll('input[name="option"]').forEach(checkbox => {
+        checkbox.addEventListener('change', function() {
+            const checkedCount = document.querySelectorAll('input[name="option"]:checked').length;
+            const statusBadge = document.getElementById('option-status');
+            
+            if (checkedCount > 0) {
+                statusBadge.textContent = `${checkedCount}件選択中`;
+                statusBadge.classList.remove('status-unselected');
+                statusBadge.classList.add('status-selected');
+            } else {
+                statusBadge.textContent = '未選択';
+                statusBadge.classList.remove('status-selected');
+                statusBadge.classList.add('status-unselected');
+            }
+            
+            const option = this.closest('.option');
+            if (this.checked) {
+                option.classList.add('selected');
+            } else {
+                option.classList.remove('selected');
+            }
+            
+            updateSummary();
+        });
+    });
+</script>
+</body>
+</html>
