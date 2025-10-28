@@ -7,3 +7,4 @@ v4 https://sfujita-works.github.io/fujiloggleworks/index_v4.html
 v5 https://sfujita-works.github.io/fujiloggleworks/index_v5.html
 v6 https://sfujita-works.github.io/fujiloggleworks/index_v6.html
 v7 https://sfujita-works.github.io/fujiloggleworks/index_v7.html
+v9 https://sfujita-works.github.io/fujiloggleworks/index_v9.html
