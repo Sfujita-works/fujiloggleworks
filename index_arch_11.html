@@ -1,0 +1,932 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>建築設計士サイト制作 簡易見積りシミュレーター</title>
+<style>
+* {
+margin: 0;
+padding: 0;
+box-sizing: border-box;
+}
+
+body {
+font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
+background: linear-gradient(135deg, #fef5f1 0%, #f5e6dc 100%);
+padding: 20px;
+line-height: 1.6;
+}
+
+.container {
+max-width: 900px;
+margin: 0 auto;
+background: white;
+border-radius: 16px;
+box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+overflow: hidden;
+}
+
+header {
+background: linear-gradient(135deg, #E08450 0%, #D8692E 100%);
+color: white;
+padding: 40px 30px;
+text-align: center;
+}
+
+header h1 {
+font-size: 20px !important;
+margin-bottom: 10px;
+}
+
+header p {
+font-size: 14px;
+opacity: 0.9;
+}
+
+.content {
+padding: 40px 30px;
+}
+
+.accordion-section {
+margin-bottom: 20px;
+border: 2px solid #e9ecef;
+border-radius: 10px;
+overflow: hidden;
+}
+
+.accordion-header {
+background: #f8f9fa;
+padding: 20px;
+cursor: pointer;
+display: flex;
+justify-content: space-between;
+align-items: center;
+transition: all 0.3s ease;
+user-select: none;
+}
+
+.accordion-header:hover {
+background: #e9ecef;
+}
+
+.accordion-header.active {
+background: #fff5f0;
+border-bottom: 2px solid #D8692E;
+}
+
+.accordion-title {
+font-size: 18px;
+font-weight: 600;
+color: #333;
+}
+
+.accordion-subtitle {
+font-size: 12px;
+color: #666;
+margin-top: 5px;
+font-weight: normal;
+}
+
+.accordion-status {
+display: flex;
+align-items: center;
+gap: 10px;
+font-size: 14px;
+color: #666;
+}
+
+.status-badge {
+padding: 4px 12px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 600;
+}
+
+.status-unselected {
+background: #e9ecef;
+color: #666;
+}
+
+.status-selected {
+background: #d4edda;
+color: #155724;
+}
+
+.accordion-icon {
+font-size: 20px;
+color: #D8692E;
+transition: all 0.3s ease;
+}
+
+.accordion-content {
+max-height: 0;
+overflow: hidden;
+transition: max-height 0.3s ease;
+}
+
+.accordion-content.active {
+max-height: 4000px;
+}
+
+.accordion-inner {
+padding: 20px;
+}
+
+.option-group {
+display: grid;
+gap: 15px;
+}
+
+.option {
+background: #f8f9fa;
+border: 2px solid #e9ecef;
+border-radius: 10px;
+padding: 20px;
+cursor: pointer;
+transition: all 0.3s ease;
+display: flex;
+align-items: flex-start;
+gap: 15px;
+}
+
+.option:hover {
+border-color: #D8692E;
+transform: translateY(-2px);
+box-shadow: 0 4px 12px rgba(216, 105, 46, 0.15);
+}
+
+.option.selected {
+border-color: #D8692E;
+background: #fff5f0;
+}
+
+.option.unselected {
+opacity: 0.5;
+}
+
+.option input[type="radio"],
+.option input[type="checkbox"] {
+width: 20px;
+height: 20px;
+margin-top: 3px;
+cursor: pointer;
+accent-color: #D8692E;
+}
+
+.option-details {
+flex: 1;
+}
+
+.option-header {
+display: flex;
+justify-content: space-between;
+align-items: center;
+margin-bottom: 8px;
+}
+
+.option-name {
+font-weight: 600;
+font-size: 16px;
+color: #333;
+}
+
+.option-price {
+font-weight: 700;
+font-size: 18px;
+color: #D8692E;
+}
+
+.option-price-old {
+text-decoration: line-through;
+color: #999;
+font-size: 14px;
+margin-right: 8px;
+}
+
+.option-desc {
+font-size: 13px;
+color: #666;
+line-height: 1.5;
+}
+
+.discount-badge {
+display: inline-block;
+background: #ff6b6b;
+color: white;
+padding: 4px 10px;
+border-radius: 20px;
+font-size: 12px;
+font-weight: 600;
+margin-left: 10px;
+}
+
+.category-title {
+font-size: 16px;
+color: #D8692E;
+font-weight: 600;
+margin-top: 25px;
+margin-bottom: 12px;
+padding-left: 10px;
+border-left: 3px solid #D8692E;
+}
+
+.page-count-selector {
+display: flex;
+align-items: center;
+gap: 10px;
+margin-top: 10px;
+padding: 10px;
+background: rgba(216, 105, 46, 0.05);
+border-radius: 8px;
+}
+
+.page-count-selector label {
+font-size: 13px;
+color: #666;
+font-weight: 600;
+}
+
+.page-count-selector select {
+padding: 5px 10px;
+border: 2px solid #D8692E;
+border-radius: 5px;
+font-size: 14px;
+color: #333;
+background: white;
+cursor: pointer;
+}
+
+.alert-message {
+background: #fff3cd;
+border-left: 4px solid #ffc107;
+padding: 15px;
+margin: 15px 0;
+border-radius: 4px;
+font-size: 14px;
+color: #856404;
+display: none;
+animation: slideDown 0.3s ease;
+}
+
+.alert-message.show {
+display: block;
+}
+
+.alert-message.recommend {
+background: #d1ecf1;
+border-left-color: #0c5460;
+color: #0c5460;
+}
+
+.alert-message.discount-info {
+background: #d4edda;
+border-left-color: #28a745;
+color: #155724;
+}
+
+@keyframes slideDown {
+from {
+opacity: 0;
+transform: translateY(-10px);
+}
+to {
+opacity: 1;
+transform: translateY(0);
+}
+}
+
+.summary {
+background: #556E98;
+color: white;
+padding: 30px;
+border-radius: 12px;
+margin-top: 40px;
+position: sticky;
+top: 20px;
+}
+
+.summary-title {
+font-size: 20px;
+margin-bottom: 20px;
+text-align: center;
+}
+
+.summary-selected-items {
+background: rgba(255,255,255,0.1);
+border-radius: 8px;
+padding: 15px;
+margin-bottom: 20px;
+font-size: 13px;
+}
+
+.summary-selected-item {
+margin-bottom: 8px;
+padding: 5px 0;
+border-bottom: 1px solid rgba(255,255,255,0.1);
+}
+
+.summary-selected-item:last-child {
+border-bottom: none;
+}
+
+.summary-discount-display {
+background: rgba(255, 107, 107, 0.2);
+border: 2px solid rgba(255, 107, 107, 0.5);
+border-radius: 8px;
+padding: 12px;
+margin-bottom: 15px;
+text-align: center;
+}
+
+.summary-discount-display .discount-text {
+font-size: 14px;
+margin-bottom: 5px;
+}
+
+.summary-discount-display .discount-amount {
+font-size: 20px;
+font-weight: 700;
+color: #ffeb3b;
+}
+
+.summary-total {
+border-top: 2px solid rgba(255,255,255,0.3);
+padding-top: 20px;
+display: flex;
+justify-content: space-between;
+align-items: center;
+}
+
+.total-label {
+font-size: 18px;
+font-weight: 600;
+}
+
+.total-amount {
+font-size: 32px;
+font-weight: 700;
+}
+
+.total-amount-old {
+text-decoration: line-through;
+opacity: 0.7;
+font-size: 20px;
+display: block;
+margin-bottom: 5px;
+}
+
+.note {
+background: #fff3cd;
+border-left: 4px solid #ffc107;
+padding: 15px;
+margin-top: 30px;
+border-radius: 4px;
+font-size: 13px;
+color: #856404;
+}
+
+.contact-button {
+display: inline-block;
+background-color: #D8692E;
+color: white;
+padding: 15px 40px;
+border-radius: 8px;
+text-decoration: none;
+font-size: 16px;
+font-weight: 600;
+transition: all 0.3s ease;
+border: 2px solid transparent;
+}
+
+.contact-button:hover {
+background-color: white;
+color: #556E98;
+border: 2px solid #556E98;
+}
+
+@media (max-width: 768px) {
+.content {
+padding: 30px 20px;
+}
+
+header h1 {
+font-size: 18px !important;
+}
+
+.option {
+flex-direction: column;
+align-items: flex-start;
+}
+
+.option input[type="radio"],
+.option input[type="checkbox"] {
+margin-bottom: 10px;
+}
+
+.option-header {
+flex-direction: column;
+align-items: flex-start;
+gap: 5px;
+}
+
+.summary {
+position: relative;
+top: 0;
+}
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+<h1>建築設計士サイト制作 簡易見積りシミュレーター</h1>
+<p>ご希望のプランやオプションを選択すると、概算見積りが表示されます</p>
+</header>
+
+<div class="content">
+<!-- ステップ1: コース選択 -->
+<div class="accordion-section">
+<div class="accordion-header active" onclick="toggleAccordion(this)">
+<div>
+<div class="accordion-title">ステップ1: コース選択</div>
+</div>
+<div class="accordion-status">
+<span class="status-badge status-selected" id="course-status">選択済み</span>
+<span class="accordion-icon">▼</span>
+</div>
+</div>
+<div class="accordion-content active">
+<div class="accordion-inner">
+<div class="option-group">
+<label class="option selected">
+<input type="radio" name="course" value="45000" data-name="建築設計士サイト制作 基本コース" checked onchange="handleCourseChange()">
+<div class="option-details">
+<div class="option-header">
+<span class="option-name">建築設計士サイト制作 基本コース</span>
+<div>
+<span class="option-price-old">¥51,000</span>
+<span class="option-price">¥45,000</span>
+<span class="discount-badge">¥6,000お得!</span>
+</div>
+</div>
+<div class="option-desc">建築設計事務所に特化したプランです（トップページ、ギャラリー一覧ページ、プロジェクト一覧ページ、各作品の説明ページ、各プロジェクトの説明ページ、事務所案内（About us）、コンタクトページ、ブログ、プライバシーポリシー）計9ページ</div>
+</div>
+</label>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ステップ2: +チョイス（ページ追加） -->
+<div class="accordion-section">
+<div class="accordion-header" onclick="toggleAccordion(this)">
+<div>
+<div class="accordion-title">ステップ2: +チョイス（ページ追加）</div>
+<div class="accordion-subtitle">必要に応じてページを追加できます</div>
+</div>
+<div class="accordion-status">
+<span class="status-badge status-unselected" id="choice-status">未選択</span>
+<span class="accordion-icon">▶</span>
+</div>
+</div>
+<div class="accordion-content">
+<div class="accordion-inner">
+<div id="choiceAlert" class="alert-message discount-info">
+<strong>💡 お得な情報！</strong><br>4つ全て選択すると<strong>¥10,000お得</strong>になります!
+</div>
+<div class="option-group">
+<label class="option">
+<input type="checkbox" name="page-choice" value="7000" data-name="メディア掲載ページ" onchange="updatePageChoice()">
+<div class="option-details">
+<div class="option-header">
+<span class="option-name">メディア掲載ページ</span>
+<span class="option-price">+¥7,000</span>
+</div>
+<div class="option-desc">メディア掲載実績を紹介するページを追加</div>
+</div>
+</label>
+
+<label class="option">
+<input type="checkbox" name="page-choice" value="7000" data-name="FAQ よくある質問" onchange="updatePageChoice()">
+<div class="option-details">
+<div class="option-header">
+<span class="option-name">FAQ よくある質問</span>
+<span class="option-price">+¥7,000</span>
+</div>
+<div class="option-desc">よくある質問ページを追加</div>
+</div>
+</label>
+
+<label class="option">
+<input type="checkbox" name="page-choice" value="12000" data-name="相談予約機能連携" onchange="updatePageChoice()">
+<div class="option-details">
+<div class="option-header">
+<span class="option-name">相談予約機能連携</span>
+<span class="option-price">+¥12,000</span>
+</div>
+<div class="option-desc">相談予約機能を追加</div>
+</div>
+</label>
+
+<label class="option">
+<input type="checkbox" name="page-choice" value="12000" data-name="採用・募集" onchange="updatePageChoice()">
+<div class="option-details">
+<div class="option-header">
+<span class="option-name">採用・募集</span>
+<span class="option-price">+¥12,000</span>
+</div>
+<div class="option-desc">採用・募集情報ページを追加</div>
+</div>
+</label>
+</div>
+</div>
+</div>
+</div>
+
+<!-- ステップ3: 追加オプション -->
+<div class="accordion-section">
+<div class="accordion-header" onclick="toggleAccordion(this)">
+<div>
+<div class="accordion-title">ステップ3: 追加オプション</div>
+</div>
+<div class="accordion-status">
+<span class="status-badge status-unselected" id="option-status">未選択</span>
+<span class="accordion-icon">▶</span>
+</div>
+</div>
+<div class="accordion-content">
+<div class="accordion-inner">
+<h3 class="category-title">技術・保守サポート（月額）</h3>
+<div class="option-group">
+<label class="option">
+<input type="checkbox" name="option" value="9800" data-name="ライト保守" data-monthly="true" onchange="updateSummary()">
+<div class="option-details">
+<div class="option-header">
+<span class="option-name">ライト保守</span>
+<span class="option-price">+¥9,800/1サイト/月額</span>
+</div>
+<div class="option-desc">WordPress更新・プラグイン確認・バックアップ（月1回）、ドメイン・サーバー・ライセンス代行維持、SEOタグ修正・メタディスクリプション追加、軽微な文言・画像差し替え（無制限）、不正アクセス検知プラグイン導入、reCAPTCHAスパム防止</div>
+</div>
+</label>
+</div>
+
+<h3 class="category-title">コンテンツ運用・拡張</h3>
+<div class="option-group">
+<label class="option">
+<input type="checkbox" name="option" value="10000" data-name="コンテンツ制作サポート（カスタムページ）" data-pages="1" onchange="updateSummary()">
+<div class="option-details">
+<div class="option-header">
+<span class="option-name">コンテンツ制作サポート（カスタムページ）</span>
+<span class="option-price" id="price-content-custom">+¥10,000/1ページ分</span>
+</div>
+<div class="option-desc">ヒアリング後、サイトに適した文章や画像構成をご提案</div>
+<div class="page-count-selector">
+<label for="pages-content-custom">ページ数:</label>
+<select id="pages-content-custom" onchange="updatePageCount('コンテンツ制作サポート（カスタムページ）', this.value, 10000)">
+<option value="1">1ページ</option>
+<option value="2">2ページ</option>
+<option value="3">3ページ</option>
+<option value="4">4ページ</option>
+<option value="5">5ページ</option>
+<option value="6">6ページ</option>
+<option value="7">7ページ</option>
+<option value="8">8ページ</option>
+<option value="9">9ページ</option>
+<option value="10">10ページ</option>
+</select>
+</div>
+</div>
+</label>
+
+<label class="option">
+<input type="checkbox" name="option" value="7000" data-name="ページ追加（新規カスタム）" data-pages="1" onchange="updateSummary()">
+<div class="option-details">
+<div class="option-header">
+<span class="option-name">ページ追加（新規カスタム）</span>
+<span class="option-price" id="price-page-custom">+¥7,000/1ページ</span>
+</div>
+<div class="option-desc">新規のカスタムページ増設や、ランディングページ作成</div>
+<div class="page-count-selector">
+<label for="pages-page-custom">ページ数:</label>
+<select id="pages-page-custom" onchange="updatePageCount('ページ追加（新規カスタム）', this.value, 7000)">
+<option value="1">1ページ</option>
+<option value="2">2ページ</option>
+<option value="3">3ページ</option>
+<option value="4">4ページ</option>
+<option value="5">5ページ</option>
+<option value="6">6ページ</option>
+<option value="7">7ページ</option>
+<option value="8">8ページ</option>
+<option value="9">9ページ</option>
+<option value="10">10ページ</option>
+</select>
+</div>
+</div>
+</label>
+</div>
+
+<h3 class="category-title">デジタルマーケティングサポート</h3>
+<div class="option-group">
+<label class="option">
+<input type="checkbox" name="option" value="5000" data-name="SNSリール作成サポート" onchange="updateSummary()">
+<div class="option-details">
+<div class="option-header">
+<span class="option-name">SNSリール作成サポート</span>
+<span class="option-price">+¥5,000/1本</span>
+</div>
+<div class="option-desc">静止画×テキストで手軽に伝わるリール動画を制作（15〜30秒）</div>
+</div>
+</label>
+</div>
+</div>
+</div>
+</div>
+
+<!-- 見積り結果 -->
+<div class="summary">
+<h3 class="summary-title">お見積り</h3>
+<div id="discountDisplay" style="display: none;" class="summary-discount-display">
+<div class="discount-text">ステップ2全選択割引適用</div>
+<div class="discount-amount">¥10,000 OFF!</div>
+</div>
+<div class="summary-selected-items" id="selectedSummary">
+<div class="summary-selected-item">
+<label style="display: flex; align-items: center; cursor: pointer; width: 100%;">
+<input type="checkbox" checked disabled style="margin-right: 10px; opacity: 0.5;">
+<span style="flex: 1;">建築設計士サイト制作 基本コース</span>
+<span style="font-weight: 600;">¥45,000</span>
+</label>
+</div>
+</div>
+<div class="summary-total">
+<div>
+<span class="total-label">初回合計金額</span>
+<span id="totalAmountOld" class="total-amount-old" style="display: none;"></span>
+</div>
+<span class="total-amount" id="totalAmount">¥45,000</span>
+</div>
+</div>
+
+<div class="note">
+<strong>ご注意：</strong><br>
+・この見積りは目安です。詳細なお見積りは、お問い合わせフォームよりご相談ください。<br>
+・月額サービスは初月のみの計算です。<br>
+・このシミュレーターには保存機能がありません。ウィンドウを閉じると見積もり結果は消えますので、必要に応じてスクリーンショットを保存してください。
+</div>
+
+<div style="text-align: center; margin-top: 30px;">
+<a href="https://portfolio.fujiloggle.com/apply-contact/" class="contact-button" target="_blank" rel="noopener noreferrer">
+お問い合わせ
+</a>
+</div>
+</div>
+</div>
+
+<script>
+let allPagesSelected = false;
+
+function toggleAccordion(header) {
+const content = header.nextElementSibling;
+const icon = header.querySelector('.accordion-icon');
+header.classList.toggle('active');
+content.classList.toggle('active');
+icon.textContent = content.classList.contains('active') ? '▼' : '▶';
+}
+
+function updatePageCount(itemName, pages, basePrice) {
+const checkbox = document.querySelector(`input[name="option"][data-name="${itemName}"]`);
+if (checkbox) {
+checkbox.setAttribute('data-pages', pages);
+checkbox.value = basePrice * parseInt(pages);
+let priceElementId = '';
+if (itemName === 'コンテンツ制作サポート（カスタムページ）') {
+priceElementId = 'price-content-custom';
+} else if (itemName === 'ページ追加（新規カスタム）') {
+priceElementId = 'price-page-custom';
+}
+const priceElement = document.getElementById(priceElementId);
+if (priceElement) {
+priceElement.textContent = '+¥' + (basePrice * parseInt(pages)).toLocaleString() + '/' + pages + 'ページ';
+}
+updateSummary();
+}
+}
+
+function updatePageChoice() {
+const choiceStatus = document.getElementById('choice-status');
+const checkedPages = document.querySelectorAll('input[name="page-choice"]:checked');
+const allPageOptions = document.querySelectorAll('input[name="page-choice"]');
+const allChecked = Array.from(allPageOptions).every(option => option.checked);
+
+// ステータス更新
+if (checkedPages.length > 0) {
+choiceStatus.textContent = `${checkedPages.length}件選択中`;
+choiceStatus.classList.remove('status-unselected');
+choiceStatus.classList.add('status-selected');
+} else {
+choiceStatus.textContent = '未選択';
+choiceStatus.classList.remove('status-selected');
+choiceStatus.classList.add('status-unselected');
+}
+
+// 全選択チェック
+allPagesSelected = allChecked;
+
+updateSummary();
+}
+
+function updateSummary() {
+let totalOnetime = 0;
+let totalMonthly = 0;
+const selectedItemsOnetime = {'建築設計士サイト制作 基本コース': 45000};
+const selectedItemsMonthly = {};
+
+// ステップ2のページ追加
+let pageChoiceTotal = 0;
+const checkedPages = document.querySelectorAll('input[name="page-choice"]:checked');
+checkedPages.forEach(checkbox => {
+const price = parseInt(checkbox.value);
+const name = checkbox.dataset.name;
+selectedItemsOnetime[name] = price;
+pageChoiceTotal += price;
+});
+
+// 全選択割引の適用
+let discountAmount = 0;
+if (allPagesSelected) {
+discountAmount = 10000;
+}
+
+// 追加オプション
+document.querySelectorAll('input[name="option"]:checked').forEach(checkbox => {
+const price = parseInt(checkbox.value);
+const name = checkbox.dataset.name;
+const isMonthly = checkbox.dataset.monthly === 'true';
+const pages = checkbox.getAttribute('data-pages');
+
+let displayName = name;
+if (pages && parseInt(pages) > 1) {
+displayName = name + ' (×' + pages + 'ページ)';
+}
+
+if (isMonthly) {
+selectedItemsMonthly[displayName] = price;
+} else {
+selectedItemsOnetime[displayName] = price;
+}
+});
+
+// 合計計算
+for (const price of Object.values(selectedItemsOnetime)) {
+totalOnetime += price;
+}
+for (const price of Object.values(selectedItemsMonthly)) {
+totalMonthly += price;
+}
+
+const totalBeforeDiscount = totalOnetime + totalMonthly;
+const totalAfterDiscount = totalBeforeDiscount - discountAmount;
+
+// 割引表示の更新
+const discountDisplay = document.getElementById('discountDisplay');
+const totalAmountOld = document.getElementById('totalAmountOld');
+if (allPagesSelected) {
+discountDisplay.style.display = 'block';
+totalAmountOld.textContent = '¥' + totalBeforeDiscount.toLocaleString();
+totalAmountOld.style.display = 'block';
+} else {
+discountDisplay.style.display = 'none';
+totalAmountOld.style.display = 'none';
+}
+
+document.getElementById('totalAmount').textContent = '¥' + totalAfterDiscount.toLocaleString();
+
+// サマリー表示の更新
+let summaryHTML = '';
+
+// 基本コース（固定）
+summaryHTML += `<div class="summary-selected-item"><label style="display: flex; align-items: center; cursor: pointer; width: 100%;"><input type="checkbox" checked disabled style="margin-right: 10px; opacity: 0.5;"><span style="flex: 1;">建築設計士サイト制作 基本コース</span><span style="font-weight: 600;">¥45,000</span></label></div>`;
+
+// ステップ2のページ追加
+for (const [name, price] of Object.entries(selectedItemsOnetime)) {
+if (name !== '建築設計士サイト制作 基本コース') {
+summaryHTML += `<div class="summary-selected-item"><label style="display: flex; align-items: center; cursor: pointer; width: 100%;"><input type="checkbox" checked onchange="removeItem('${name.replace(/'/g, "\\'")}', 'page')" style="margin-right: 10px;"><span style="flex: 1;">${name}</span><span style="font-weight: 600;">¥${price.toLocaleString()}</span></label></div>`;
+}
+}
+
+// 追加オプション
+for (const [name, price] of Object.entries(selectedItemsMonthly)) {
+summaryHTML += `<div class="summary-selected-item"><label style="display: flex; align-items: center; cursor: pointer; width: 100%;"><input type="checkbox" checked onchange="removeItem('${name.replace(/'/g, "\\'")}', 'monthly')" style="margin-right: 10px;"><span style="flex: 1;">${name}（月額）</span><span style="font-weight: 600;">¥${price.toLocaleString()}</span></label></div>`;
+}
+
+// 割引表示
+if (allPagesSelected) {
+summaryHTML += `<div class="summary-selected-item" style="background: rgba(255, 107, 107, 0.2); border-radius: 5px; padding: 8px;"><label style="display: flex; align-items: center; width: 100%;"><span style="flex: 1; font-weight: 600; color: #ffeb3b;">全選択割引</span><span style="font-weight: 700; color: #ffeb3b;">-¥10,000</span></label></div>`;
+}
+
+document.getElementById('selectedSummary').innerHTML = summaryHTML;
+}
+
+function removeItem(name, type) {
+// ページ数表示が含まれている場合、元の名前に戻す
+let originalName = name.replace(/ \(×\d+ページ\)/, '');
+
+// ステップ2のページ選択解除
+const pageChoice = document.querySelector(`input[name="page-choice"][data-name="${originalName}"]`);
+if (pageChoice) {
+pageChoice.checked = false;
+pageChoice.closest('.option').classList.remove('selected');
+updatePageChoice();
+return;
+}
+
+// オプション選択解除
+const optionCheckbox = document.querySelector(`input[name="option"][data-name="${originalName}"]`);
+if (optionCheckbox) {
+optionCheckbox.checked = false;
+optionCheckbox.closest('.option').classList.remove('selected');
+
+// ページ数セレクタをリセット
+if (originalName.includes('コンテンツ制作サポート') || originalName === 'ページ追加（新規カスタム）') {
+let selectId = '';
+let basePrice = 0;
+let priceElementId = '';
+if (originalName.includes('カスタムページ')) {
+selectId = 'pages-content-custom';
+basePrice = 10000;
+priceElementId = 'price-content-custom';
+} else if (originalName === 'ページ追加（新規カスタム）') {
+selectId = 'pages-page-custom';
+basePrice = 7000;
+priceElementId = 'price-page-custom';
+}
+if (selectId) {
+document.getElementById(selectId).value = '1';
+optionCheckbox.setAttribute('data-pages', '1');
+optionCheckbox.value = basePrice;
+document.getElementById(priceElementId).textContent = '+¥' + basePrice.toLocaleString() + '/1ページ';
+}
+}
+
+const checkedCount = document.querySelectorAll('input[name="option"]:checked').length;
+const statusBadge = document.getElementById('option-status');
+if (checkedCount > 0) {
+statusBadge.textContent = `${checkedCount}件選択中`;
+} else {
+statusBadge.textContent = '未選択';
+statusBadge.classList.remove('status-selected');
+statusBadge.classList.add('status-unselected');
+}
+}
+
+updateSummary();
+}
+
+function handleCourseChange() {
+updateSummary();
+}
+
+// イベントリスナーの設定
+document.querySelectorAll('input[name="option"]').forEach(checkbox => {
+checkbox.addEventListener('change', function() {
+const checkedCount = document.querySelectorAll('input[name="option"]:checked').length;
+const statusBadge = document.getElementById('option-status');
+
+if (checkedCount > 0) {
+statusBadge.textContent = `${checkedCount}件選択中`;
+statusBadge.classList.remove('status-unselected');
+statusBadge.classList.add('status-selected');
+} else {
+statusBadge.textContent = '未選択';
+statusBadge.classList.remove('status-selected');
+statusBadge.classList.add('status-unselected');
+}
+
+const option = this.closest('.option');
+if (this.checked) {
+option.classList.add('selected');
+} else {
+option.classList.remove('selected');
+}
+
+updateSummary();
+});
+});
+
+document.querySelectorAll('input[name="page-choice"]').forEach(checkbox => {
+checkbox.addEventListener('change', function() {
+const option = this.closest('.option');
+if (this.checked) {
+option.classList.add('selected');
+} else {
+option.classList.remove('selected');
+}
+});
+});
+
+// 初期表示
+updateSummary();
+</script>
+</body>
+</html>
