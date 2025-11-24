@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>追加オプション一覧</title>
+<style>
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+body {
+  font-family: 'Segoe UI', 'Hiragino Sans', sans-serif;
+  background: linear-gradient(135deg, #fef5f1 0%, #f5e6dc 100%);
+  padding: 40px 20px;
+  line-height: 1.6;
+}
+
+.container {
+  max-width: 1000px;
+  margin: 0 auto;
+  background: white;
+  border-radius: 16px;
+  padding: 40px;
+  box-shadow: 0 10px 40px rgba(0,0,0,0.1);
+}
+
+h1 {
+  text-align: center;
+  color: #333;
+  margin-bottom: 10px;
+  font-size: 28px;
+}
+
+.subtitle {
+  text-align: center;
+  color: #666;
+  margin-bottom: 40px;
+  font-size: 14px;
+}
+
+.option-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin: 30px 0;
+  font-size: 15px;
+  line-height: 1.6;
+  border: 2px solid #e9ecef;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 6px rgba(0,0,0,0.05);
+  table-layout: fixed;
+}
+
+.option-table thead {
+  background: linear-gradient(135deg, #E08450 0%, #D8692E 100%);
+  color: white;
+}
+
+.option-table th {
+  text-align: left;
+  padding: 16px;
+  font-weight: 700;
+  font-size: 16px;
+}
+
+.option-table th:first-child {
+  width: 24%;
+}
+
+.option-table th:nth-child(2) {
+  width: 22%;
+}
+
+.option-table th:nth-child(3) {
+  width: 54%;
+}
+
+.option-table td {
+  padding: 16px;
+  vertical-align: top;
+  border-bottom: 1px solid #e9ecef;
+  border-right: 1px solid #e9ecef;
+  word-wrap: break-word;
+  word-break: break-word;
+  white-space: normal;
+}
+
+.option-table td:last-child {
+  border-right: none;
+}
+
+.option-table td.category {
+  background: linear-gradient(135deg, #E08450 0%, #D8692E 100%);
+  color: #fff;
+  font-weight: 600;
+  text-align: left;
+  width: 24%;
+  min-width: 140px;
+  white-space: normal;
+  vertical-align: middle;
+  padding: 16px;
+  word-wrap: break-word;
+  word-break: break-word;
+  overflow-wrap: break-word;
+  font-size: 15px;
+}
+
+.option-table tr td:nth-child(2):not(.category) {
+  width: 22%;
+  font-weight: 600;
+  color: #333;
+}
+
+.option-table tr td:nth-child(3) {
+  width: 54%;
+  color: #666;
+}
+
+.option-table tr td:nth-child(3) strong {
+  color: #D8692E;
+  font-size: 18px;
+  display: block;
+  margin-bottom: 8px;
+}
+
+.option-table tr:last-child td {
+  border-bottom: none;
+}
+
+.option-table tbody tr:hover {
+  background-color: #fff5f0;
+}
+
+.emoji {
+  font-size: 18px;
+  margin-right: 4px;
+}
+
+/* タブレット対応（768px以下） */
+@media (max-width: 768px) {
+  .container {
+    padding: 30px 20px;
+  }
+  
+  h1 {
+    font-size: 24px;
+  }
+  
+  .option-table {
+    font-size: 13px;
+    line-height: 1.5;
+  }
+  
+  .option-table th {
+    font-size: 14px;
+    padding: 12px;
+  }
+  
+  .option-table td {
+    font-size: 12px;
+    padding: 12px;
+  }
+  
+  .option-table td.category {
+    font-size: 13px;
+    padding: 12px 10px;
+    min-width: 100px;
+  }
+  
+  .option-table tr td:nth-child(3) strong {
+    font-size: 16px;
+  }
+}
+
+/* スマホ対応（480px以下） */
+@media (max-width: 480px) {
+  .container {
+    padding: 20px 15px;
+  }
+  
+  h1 {
+    font-size: 20px;
+  }
+  
+  .subtitle {
+    font-size: 12px;
+  }
+  
+  .option-table {
+    font-size: 11px;
+    line-height: 1.4;
+  }
+  
+  .option-table th {
+    font-size: 12px;
+    padding: 10px 8px;
+  }
+  
+  .option-table td {
+    font-size: 10px;
+    padding: 10px 8px;
+  }
+  
+  .option-table td.category {
+    font-size: 11px;
+    padding: 10px 6px;
+    min-width: 80px;
+    width: 28%;
+  }
+  
+  .option-table tr td:nth-child(2):not(.category) {
+    width: 28%;
+  }
+  
+  .option-table tr td:nth-child(3) {
+    width: 44%;
+  }
+  
+  .option-table tr td:nth-child(3) strong {
+    font-size: 14px;
+    margin-bottom: 4px;
+  }
+  
+  .emoji {
+    font-size: 14px;
+  }
+}
+</style>
+</head>
+<body>
+<div class="container">
+  <h1>追加オプション一覧</h1>
+  <p class="subtitle">サイト制作後も、ビジネスの成長に合わせて柔軟に拡張できます</p>
+  
+  <table class="option-table">
+    <thead>
+      <tr>
+        <th>カテゴリ</th>
+        <th>項目</th>
+        <th>料金・概要</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td class="category"><span class="emoji">🔧</span>技術・保守サポート<br>（月額）</td>
+        <td>ライト保守</td>
+        <td><strong>¥9,800/1サイト/月額</strong>WordPress更新・プラグイン確認・バックアップ（月1回）、ドメイン・サーバー・ライセンス代行維持、SEOタグ修正・メタディスクリプション追加、軽微な文言・画像差し替え（無制限）、不正アクセス検知プラグイン導入、reCAPTCHAスパム防止</td>
+      </tr>
+      <tr>
+        <td class="category" rowspan="2"><span class="emoji">🧩</span>コンテンツ運用・拡張</td>
+        <td>コンテンツ制作サポート（カスタムページ）</td>
+        <td><strong>¥10,000/1ページ</strong>お客様の想いやサービス内容をヒアリングし、サイトに適した文章や画像構成を提案。</td>
+      </tr>
+      <tr>
+        <td>ページ追加（新規カスタム）</td>
+        <td><strong>¥7,000/1ページ</strong>新規のカスタムページ増設や、ランディングページ作成。</td>
+      </tr>
+      <tr>
+        <td class="category"><span class="emoji">📈</span>デジタルマーケティングサポート</td>
+        <td>SNSリール作成サポート</td>
+        <td><strong>¥5,000/1本</strong>静止画×テキスト素材をもとに15〜30秒の短尺リール動画を制作。InstagramやFacebook投稿用に最適化。</td>
+      </tr>
+    </tbody>
+  </table>
+</div>
+</body>
+</html>
