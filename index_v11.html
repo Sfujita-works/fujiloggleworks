@@ -434,7 +434,7 @@ top: 0;
 <div class="accordion-inner">
 <div class="option-group">
 <label class="option">
-<input type="radio" name="course" value="60000" data-name="フルコース" data-course-type="general" onchange="handleCourseChange()">
+<input type="radio" name="course" value="60000" data-name="フルコース" onchange="handleCourseChange()">
 <div class="option-details">
 <div class="option-header">
 <span class="option-name">フルコース</span>
@@ -449,7 +449,7 @@ top: 0;
 </label>
 
 <label class="option">
-<input type="radio" name="course" value="30000" data-name="基本コース" data-course-type="general" onchange="handleCourseChange()">
+<input type="radio" name="course" value="30000" data-name="基本コース" onchange="handleCourseChange()">
 <div class="option-details">
 <div class="option-header">
 <span class="option-name">基本コース</span>
@@ -463,7 +463,7 @@ top: 0;
 </div>
 </div>
 
-<!-- ステップ2: +チョイス（ページ追加）- 一般基本コース用 -->
+<!-- ステップ2: +チョイス（ページ追加） -->
 <div class="accordion-section" id="step2Section" style="display: none;">
 <div class="accordion-header" onclick="toggleAccordion(this)">
 <div>
@@ -520,69 +520,6 @@ top: 0;
 <span class="option-price">+¥12,000</span>
 </div>
 <div class="option-desc">予約機能を追加</div>
-</div>
-</label>
-</div>
-</div>
-</div>
-</div>
-
-<!-- ステップ2: +チョイス（ページ追加）- 建築設計士コース用 -->
-<div class="accordion-section" id="step2ArchitectSection" style="display: none;">
-<div class="accordion-header" onclick="toggleAccordion(this)">
-<div>
-<div class="accordion-title">ステップ2: +チョイス（ページ追加）</div>
-<div class="accordion-subtitle">建築設計士サイト制作 基本コースを選んだ方は、ページを追加することができます</div>
-</div>
-<div class="accordion-status">
-<span class="status-badge status-unselected" id="choice-architect-status">未選択</span>
-<span class="accordion-icon">▶</span>
-</div>
-</div>
-<div class="accordion-content">
-<div class="accordion-inner">
-<div class="option-group">
-<label class="option">
-<input type="checkbox" name="page-choice-architect" value="7000" data-name="メディア掲載ページ" onchange="updatePageChoiceArchitect()">
-<div class="option-details">
-<div class="option-header">
-<span class="option-name">メディア掲載ページ</span>
-<span class="option-price">+¥7,000</span>
-</div>
-<div class="option-desc">メディア掲載実績を紹介するページを追加</div>
-</div>
-</label>
-
-<label class="option">
-<input type="checkbox" name="page-choice-architect" value="7000" data-name="FAQ よくある質問" onchange="updatePageChoiceArchitect()">
-<div class="option-details">
-<div class="option-header">
-<span class="option-name">FAQ よくある質問</span>
-<span class="option-price">+¥7,000</span>
-</div>
-<div class="option-desc">よくある質問ページを追加</div>
-</div>
-</label>
-
-<label class="option">
-<input type="checkbox" name="page-choice-architect" value="12000" data-name="相談予約機能連携" onchange="updatePageChoiceArchitect()">
-<div class="option-details">
-<div class="option-header">
-<span class="option-name">相談予約機能連携</span>
-<span class="option-price">+¥12,000</span>
-</div>
-<div class="option-desc">相談予約機能を追加</div>
-</div>
-</label>
-
-<label class="option">
-<input type="checkbox" name="page-choice-architect" value="12000" data-name="採用・募集" onchange="updatePageChoiceArchitect()">
-<div class="option-details">
-<div class="option-header">
-<span class="option-name">採用・募集</span>
-<span class="option-price">+¥12,000</span>
-</div>
-<div class="option-desc">採用・募集情報ページを追加</div>
 </div>
 </label>
 </div>
@@ -843,28 +780,6 @@ isFullCourseRecommended = false;
 updateSummary();
 }
 
-function updatePageChoiceArchitect() {
-const architectCourse = document.querySelector('input[name="course"][value="45000"]');
-const choiceArchitectStatus = document.getElementById('choice-architect-status');
-
-if (architectCourse && architectCourse.checked) {
-const checkedPages = document.querySelectorAll('input[name="page-choice-architect"]:checked');
-
-// ステータス更新
-if (checkedPages.length > 0) {
-choiceArchitectStatus.textContent = `${checkedPages.length}件選択中`;
-choiceArchitectStatus.classList.remove('status-unselected');
-choiceArchitectStatus.classList.add('status-selected');
-} else {
-choiceArchitectStatus.textContent = '未選択';
-choiceArchitectStatus.classList.remove('status-selected');
-choiceArchitectStatus.classList.add('status-unselected');
-}
-}
-
-updateSummary();
-}
-
 function updateSummary() {
 let totalOnetime = 0;
 let totalMonthly = 0;
@@ -876,7 +791,6 @@ if (selectedCourse) {
 const price = parseInt(selectedCourse.value);
 const name = selectedCourse.dataset.name;
 const isBasicCourse = selectedCourse.value === '30000';
-const isArchitectCourse = selectedCourse.value === '45000';
 
 if (isBasicCourse && isFullCourseRecommended) {
 const checkedPages = document.querySelectorAll('input[name="page-choice"]:checked');
@@ -894,12 +808,6 @@ selectedItemsOnetime[checkbox.dataset.name] = parseInt(checkbox.value);
 } else if (isBasicCourse) {
 selectedItemsOnetime[name] = price;
 const checkedPages = document.querySelectorAll('input[name="page-choice"]:checked');
-checkedPages.forEach(checkbox => {
-selectedItemsOnetime[checkbox.dataset.name] = parseInt(checkbox.value);
-});
-} else if (isArchitectCourse) {
-selectedItemsOnetime[name] = price;
-const checkedPages = document.querySelectorAll('input[name="page-choice-architect"]:checked');
 checkedPages.forEach(checkbox => {
 selectedItemsOnetime[checkbox.dataset.name] = parseInt(checkbox.value);
 });
@@ -962,21 +870,13 @@ document.getElementById('course-status').textContent = '未選択';
 document.getElementById('course-status').classList.remove('status-selected');
 document.getElementById('course-status').classList.add('status-unselected');
 document.getElementById('step2Section').style.display = 'none';
-document.getElementById('step2ArchitectSection').style.display = 'none';
 document.querySelectorAll('input[name="page-choice"]').forEach(cb => {
-cb.checked = false;
-cb.closest('.option').classList.remove('selected');
-});
-document.querySelectorAll('input[name="page-choice-architect"]').forEach(cb => {
 cb.checked = false;
 cb.closest('.option').classList.remove('selected');
 });
 document.getElementById('choice-status').textContent = '未選択';
 document.getElementById('choice-status').classList.remove('status-selected');
 document.getElementById('choice-status').classList.add('status-unselected');
-document.getElementById('choice-architect-status').textContent = '未選択';
-document.getElementById('choice-architect-status').classList.remove('status-selected');
-document.getElementById('choice-architect-status').classList.add('status-unselected');
 }
 
 const pageChoice = document.querySelector(`input[name="page-choice"][data-name="${originalName}"]`);
@@ -984,13 +884,6 @@ if (pageChoice) {
 pageChoice.checked = false;
 pageChoice.closest('.option').classList.remove('selected');
 updatePageChoice();
-}
-
-const pageChoiceArchitect = document.querySelector(`input[name="page-choice-architect"][data-name="${originalName}"]`);
-if (pageChoiceArchitect) {
-pageChoiceArchitect.checked = false;
-pageChoiceArchitect.closest('.option').classList.remove('selected');
-updatePageChoiceArchitect();
 }
 
 const optionCheckbox = document.querySelector(`input[name="option"][data-name="${originalName}"]`);
@@ -1037,9 +930,7 @@ function handleCourseChange() {
 const statusBadge = document.getElementById('course-status');
 const selectedCourse = document.querySelector('input[name="course"]:checked');
 const step2Section = document.getElementById('step2Section');
-const step2ArchitectSection = document.getElementById('step2ArchitectSection');
 const choiceStatus = document.getElementById('choice-status');
-const choiceArchitectStatus = document.getElementById('choice-architect-status');
 
 statusBadge.textContent = '選択済み：' + selectedCourse.dataset.name;
 statusBadge.classList.remove('status-unselected');
@@ -1056,22 +947,10 @@ option.classList.add('unselected');
 }
 });
 
-// 一般基本コースの場合
 if (selectedCourse.value === '30000') {
 step2Section.style.display = 'block';
-step2ArchitectSection.style.display = 'none';
-document.querySelectorAll('input[name="page-choice-architect"]').forEach(cb => {
-cb.checked = false;
-cb.closest('.option').classList.remove('selected');
-});
-choiceArchitectStatus.textContent = '未選択';
-choiceArchitectStatus.classList.remove('status-selected');
-choiceArchitectStatus.classList.add('status-unselected');
-} 
-// 建築設計士コースの場合
-else if (selectedCourse.value === '45000') {
+} else {
 step2Section.style.display = 'none';
-step2ArchitectSection.style.display = 'block';
 document.querySelectorAll('input[name="page-choice"]').forEach(cb => {
 cb.checked = false;
 cb.closest('.option').classList.remove('selected');
@@ -1079,29 +958,9 @@ cb.closest('.option').classList.remove('selected');
 choiceStatus.textContent = '未選択';
 choiceStatus.classList.remove('status-selected');
 choiceStatus.classList.add('status-unselected');
-} 
-// フルコースの場合
-else {
-step2Section.style.display = 'none';
-step2ArchitectSection.style.display = 'none';
-document.querySelectorAll('input[name="page-choice"]').forEach(cb => {
-cb.checked = false;
-cb.closest('.option').classList.remove('selected');
-});
-document.querySelectorAll('input[name="page-choice-architect"]').forEach(cb => {
-cb.checked = false;
-cb.closest('.option').classList.remove('selected');
-});
-choiceStatus.textContent = '未選択';
-choiceStatus.classList.remove('status-selected');
-choiceStatus.classList.add('status-unselected');
-choiceArchitectStatus.textContent = '未選択';
-choiceArchitectStatus.classList.remove('status-selected');
-choiceArchitectStatus.classList.add('status-unselected');
 }
 
 updatePageChoice();
-updatePageChoiceArchitect();
 }
 
 function handleDesignChange() {
@@ -1148,17 +1007,6 @@ updateSummary();
 });
 
 document.querySelectorAll('input[name="page-choice"]').forEach(checkbox => {
-checkbox.addEventListener('change', function() {
-const option = this.closest('.option');
-if (this.checked) {
-option.classList.add('selected');
-} else {
-option.classList.remove('selected');
-}
-});
-});
-
-document.querySelectorAll('input[name="page-choice-architect"]').forEach(checkbox => {
 checkbox.addEventListener('change', function() {
 const option = this.closest('.option');
 if (this.checked) {
