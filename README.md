@@ -12,3 +12,4 @@ v10 https://sfujita-works.github.io/fujiloggleworks/index_v10.html
 v11 https://sfujita-works.github.io/fujiloggleworks/index_arch_11.html
 v001 https://sfujita-works.github.io/fujiloggleworks/index_pricing_general.html
 v11-1 https://sfujita-works.github.io/fujiloggleworks/index_v11.html
+leafletv1 https://sfujita-works.github.io/fujiloggleworks/index-leaflet-v1.html
