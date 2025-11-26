@@ -1,0 +1,442 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>建築士向けWebサイト制作 - 詳細</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Noto Serif JP', 'Yu Mincho', 'YuMincho', serif;
+            background: linear-gradient(135deg, #e8d5c4 0%, #d4bfad 50%, #c9b5a3 100%);
+            color: #2c2c2c;
+            line-height: 1.7;
+            position: relative;
+            overflow: hidden;
+        }
+        
+        /* 背景の幾何学的な影のオーバーレイ */
+        body::before {
+            content: '';
+            position: absolute;
+            top: -10%;
+            left: -10%;
+            width: 60%;
+            height: 80%;
+            background: linear-gradient(165deg, rgba(255,255,255,0.4) 0%, transparent 70%);
+            transform: skewY(-5deg);
+            pointer-events: none;
+        }
+        
+        body::after {
+            content: '';
+            position: absolute;
+            bottom: -20%;
+            right: -15%;
+            width: 70%;
+            height: 90%;
+            background: linear-gradient(345deg, rgba(100,80,60,0.15) 0%, transparent 60%);
+            transform: skewY(8deg);
+            pointer-events: none;
+        }
+        
+        .container {
+            width: 210mm;
+            height: 297mm;
+            margin: 0 auto;
+            background: transparent;
+            position: relative;
+            padding: 15mm 12mm;
+        }
+        
+        .content-wrapper {
+            position: relative;
+            z-index: 1;
+            height: 100%;
+            display: flex;
+            flex-direction: column;
+        }
+        
+        /* ヘッダー */
+        .header {
+            text-align: center;
+            margin-bottom: 8mm;
+            padding-bottom: 5mm;
+            border-bottom: 1px solid rgba(60,50,40,0.2);
+        }
+        
+        .header h1 {
+            font-size: 18pt;
+            font-weight: 400;
+            letter-spacing: 0.15em;
+            color: #3d3d3d;
+            margin-bottom: 3mm;
+        }
+        
+        .header p {
+            font-size: 9pt;
+            color: #666;
+            letter-spacing: 0.08em;
+        }
+        
+        /* メインコンテンツエリア */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 8mm;
+            flex: 1;
+        }
+        
+        /* サービス概要 */
+        .service-overview {
+            background: rgba(255,255,255,0.75);
+            padding: 6mm;
+            border-radius: 2mm;
+            box-shadow: 0 2mm 8mm rgba(0,0,0,0.08);
+        }
+        
+        .service-overview h2 {
+            font-size: 13pt;
+            font-weight: 500;
+            margin-bottom: 4mm;
+            color: #3d3d3d;
+            letter-spacing: 0.1em;
+            border-left: 3px solid #8b7355;
+            padding-left: 3mm;
+        }
+        
+        .features {
+            margin-top: 4mm;
+        }
+        
+        .feature-item {
+            margin-bottom: 3mm;
+            padding-left: 4mm;
+            position: relative;
+        }
+        
+        .feature-item::before {
+            content: '';
+            position: absolute;
+            left: 0;
+            top: 6pt;
+            width: 4pt;
+            height: 4pt;
+            background: #8b7355;
+            transform: rotate(45deg);
+        }
+        
+        .feature-item h3 {
+            font-size: 9.5pt;
+            font-weight: 600;
+            margin-bottom: 1mm;
+            color: #3d3d3d;
+        }
+        
+        .feature-item p {
+            font-size: 8pt;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        /* 料金プラン */
+        .pricing {
+            background: rgba(255,255,255,0.75);
+            padding: 6mm;
+            border-radius: 2mm;
+            box-shadow: 0 2mm 8mm rgba(0,0,0,0.08);
+        }
+        
+        .pricing h2 {
+            font-size: 13pt;
+            font-weight: 500;
+            margin-bottom: 4mm;
+            color: #3d3d3d;
+            letter-spacing: 0.1em;
+            border-left: 3px solid #8b7355;
+            padding-left: 3mm;
+        }
+        
+        .price-box {
+            background: rgba(139,115,85,0.08);
+            padding: 4mm;
+            border-radius: 2mm;
+            margin-bottom: 3mm;
+            border: 1px solid rgba(139,115,85,0.15);
+        }
+        
+        .price-box h3 {
+            font-size: 10pt;
+            font-weight: 600;
+            margin-bottom: 2mm;
+            color: #3d3d3d;
+        }
+        
+        .price {
+            font-size: 16pt;
+            font-weight: 600;
+            color: #8b7355;
+            margin-bottom: 2mm;
+        }
+        
+        .price .original {
+            font-size: 9pt;
+            text-decoration: line-through;
+            color: #999;
+            margin-right: 2mm;
+        }
+        
+        .price-box ul {
+            list-style: none;
+            font-size: 7.5pt;
+            color: #555;
+            line-height: 1.5;
+        }
+        
+        .price-box li {
+            margin-bottom: 1mm;
+            padding-left: 3mm;
+            position: relative;
+        }
+        
+        .price-box li::before {
+            content: '・';
+            position: absolute;
+            left: 0;
+        }
+        
+        /* モニター募集 */
+        .monitor-section {
+            grid-column: 1 / -1;
+            background: linear-gradient(135deg, rgba(139,115,85,0.12) 0%, rgba(139,115,85,0.06) 100%);
+            padding: 5mm;
+            border-radius: 2mm;
+            border: 1.5px solid rgba(139,115,85,0.25);
+            margin-top: 3mm;
+        }
+        
+        .monitor-section h2 {
+            font-size: 12pt;
+            font-weight: 600;
+            margin-bottom: 3mm;
+            color: #3d3d3d;
+            text-align: center;
+            letter-spacing: 0.1em;
+        }
+        
+        .monitor-content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 5mm;
+            font-size: 7.5pt;
+        }
+        
+        .monitor-price {
+            background: rgba(255,255,255,0.7);
+            padding: 3mm;
+            border-radius: 2mm;
+            text-align: center;
+        }
+        
+        .monitor-price h3 {
+            font-size: 9pt;
+            margin-bottom: 2mm;
+            color: #3d3d3d;
+        }
+        
+        .monitor-price .price {
+            font-size: 14pt;
+            color: #c45;
+            font-weight: 700;
+        }
+        
+        /* フッター */
+        .footer {
+            margin-top: 5mm;
+            padding-top: 4mm;
+            border-top: 1px solid rgba(60,50,40,0.2);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .contact-info {
+            font-size: 8pt;
+            color: #555;
+        }
+        
+        .contact-info p {
+            margin-bottom: 1mm;
+        }
+        
+        .contact-info strong {
+            color: #3d3d3d;
+            font-weight: 600;
+        }
+        
+        .qr-code {
+            width: 20mm;
+            height: 20mm;
+            background: white;
+            border: 1px solid #ddd;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 7pt;
+            color: #999;
+            text-align: center;
+        }
+        
+        .design-note {
+            grid-column: 1 / -1;
+            background: rgba(255,255,255,0.6);
+            padding: 4mm;
+            border-radius: 2mm;
+            border-left: 3px solid #8b7355;
+            margin-top: 3mm;
+        }
+        
+        .design-note h3 {
+            font-size: 9.5pt;
+            font-weight: 600;
+            margin-bottom: 2mm;
+            color: #3d3d3d;
+        }
+        
+        .design-note p {
+            font-size: 7.5pt;
+            color: #555;
+            line-height: 1.6;
+        }
+        
+        @media print {
+            body {
+                background: linear-gradient(135deg, #e8d5c4 0%, #d4bfad 50%, #c9b5a3 100%);
+            }
+            .container {
+                margin: 0;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="content-wrapper">
+            <div class="header">
+                <h1>サービス詳細</h1>
+                <p>建築家のための、シンプルで強いWebサイト制作</p>
+            </div>
+            
+            <div class="main-content">
+                <div class="service-overview">
+                    <h2>サービスの特徴</h2>
+                    <div class="features">
+                        <div class="feature-item">
+                            <h3>Simple and minimal</h3>
+                            <p>デザインは作品が主役。余白を最大限に生かし、建築の世界観が美しく伝わる構成。</p>
+                        </div>
+                        <div class="feature-item">
+                            <h3>Clean Structure</h3>
+                            <p>欲しい情報にまっすぐ届く無駄のない導線。ギャラリー・プロジェクトを整理し、施主に伝える読みやすさを実現。</p>
+                        </div>
+                        <div class="feature-item">
+                            <h3>Easy to Update</h3>
+                            <p>専門知識がなくても更新しやすい軽量なWordPress構成。写真・文章の差し替えが簡単。</p>
+                        </div>
+                    </div>
+                    
+                    <div class="design-note" style="margin-top: 5mm;">
+                        <h3>含まれるページ(基本9ページ)</h3>
+                        <p>トップページ / ギャラリー一覧 / プロジェクト一覧 / 各作品の説明 / 各プロジェクトの説明 / 事務所案内 / コンタクト / ブログ / プライバシーポリシー</p>
+                    </div>
+                </div>
+                
+                <div class="pricing">
+                    <h2>料金プラン</h2>
+                    
+                    <div class="price-box">
+                        <h3>基本コース</h3>
+                        <div class="price">
+                            <span class="original">51,000円</span>
+                            <span>45,000円</span>
+                        </div>
+                        <ul>
+                            <li>建築設計事務所向け専用パッケージ</li>
+                            <li>9ページの充実した基本構成</li>
+                            <li>6,000円割引適用</li>
+                        </ul>
+                    </div>
+                    
+                    <div class="price-box">
+                        <h3>フルセット(全追加オプション込み)</h3>
+                        <div class="price">
+                            <span class="original">83,000円</span>
+                            <span>73,000円</span>
+                        </div>
+                        <ul>
+                            <li>基本9ページ + 追加4ページ(計13ページ)</li>
+                            <li>メディア掲載 / FAQ / 相談予約機能 / 採用募集</li>
+                            <li>10,000円割引適用</li>
+                        </ul>
+                    </div>
+                    
+                    <div style="background: rgba(255,255,255,0.5); padding: 3mm; border-radius: 2mm; margin-top: 3mm;">
+                        <p style="font-size: 7.5pt; color: #555; line-height: 1.5;">
+                            <strong style="color: #3d3d3d;">柔軟なカスタマイズ対応</strong><br>
+                            ギャラリー構成の調整、プロジェクト分類の追加など、貴事務所の美意識に沿った形へ調整いたします。
+                        </p>
+                    </div>
+                </div>
+                
+                <div class="monitor-section">
+                    <h2>小さなBPRモニター募集中</h2>
+                    <div class="monitor-content">
+                        <div>
+                            <p style="margin-bottom: 2mm; line-height: 1.6;">事務業務プロセス現場の"ちょっと不便"を拾い、実務で使えるミニBPRを一緒につくるモニターです。</p>
+                            <p style="font-size: 7pt; color: #666; line-height: 1.5;">※BPR: Business Process Reengineering<br>業務プロセスを見直し、コンピューターなどを使って合理化・効率化すること</p>
+                        </div>
+                        <div>
+                            <div class="monitor-price" style="margin-bottom: 2mm;">
+                                <h3>基本セット</h3>
+                                <div class="price">22,500円</div>
+                                <p style="font-size: 7pt; color: #666;">通常45,000円→半額</p>
+                            </div>
+                            <div class="monitor-price">
+                                <h3>フルセット</h3>
+                                <div class="price">58,100円</div>
+                                <p style="font-size: 7pt; color: #666;">通常83,000円→30%OFF</p>
+                            </div>
+                        </div>
+                    </div>
+                    <p style="font-size: 7pt; color: #555; margin-top: 3mm; text-align: center;">
+                        + ミニBPR試作品を無料提供 / 製品化後は、ご希望の方に半額でご提供
+                    </p>
+                </div>
+                
+                <div class="design-note">
+                    <h3>デザインポリシー</h3>
+                    <p>Webデザインに「完全オリジナル」はありません。建築家のサイトでは、作品と思想こそがオリジナル。Webはそれを邪魔しない"透明なデザイン"であるべきだと考えています。過度な演出や複雑なアニメーションは使わず、作品がもっと美しく見え、更新もしやすい形でご提供します。</p>
+                </div>
+            </div>
+            
+            <div class="footer">
+                <div class="contact-info">
+                    <p><strong>Fujiloggle Works</strong></p>
+                    <p>📞 090-3331-5934</p>
+                    <p>✉️ contact@fujiloggle.com</p>
+                    <p>📍 東京都世田谷区太子堂5-29-2</p>
+                </div>
+                <div class="qr-code">
+                    QRコード<br>
+                    詳細はこちら
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
